@@ -70,4 +70,4 @@ helpdesk/
 │── modules/           # Header, sidebar, layouts
 │── public/            # CSS, JS, imágenes
 │── usuarios.php       # Gestión de usuarios (solo admin)
-│── tickets.php        # Gestión de tickets
+│── tickets.php        # Gestión de tickets# MVC_HELPDESK
