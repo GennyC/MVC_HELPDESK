@@ -1,5 +1,4 @@
 {
-  "name": "mvchelpdesk/app",
   "description": "MVC Helpdesk PHP App",
   "require": {
     "php": "^8.0"
