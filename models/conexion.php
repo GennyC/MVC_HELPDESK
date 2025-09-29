@@ -2,40 +2,37 @@
 class Conexion {
     public static function conectar() {
         try {
-            $url = getenv("JAWSDB_URL");
+            // Check if running on Heroku (JAWSDB_URL exists)
+            if (getenv("JAWSDB_URL")) {
+                $url = parse_url(getenv("JAWSDB_URL"));
 
-            if ($url) {
-                // Parse JawsDB URL (Heroku)
-                $dbparts = parse_url($url);
+                $host = $url["host"];
+                $dbname = ltrim($url["path"], '/');
+                $user = $url["user"];
+                $pass = $url["pass"];
 
-                $host = $dbparts['host'];
-                $user = $dbparts['user'];
-                $pass = $dbparts['pass'];
-                $dbname = ltrim($dbparts['path'], '/');
-                $port = $dbparts['port'] ?? 3306;
+                $dsn = "mysql:host={$host};dbname={$dbname};charset=utf8";
+                $dbh = new PDO($dsn, $user, $pass);
             } else {
-                // Local XAMPP fallback
-                $host = "localhost";
-                $user = "root";
-                $pass = "12345";
-                $dbname = "proyectomvc_helpdesk";
-                $port = 3306;
+                // Localhost fallback
+                $dbh = new PDO(
+                    "mysql:host=localhost;dbname=proyectomvc_helpdesk;charset=utf8",
+                    "root",
+                    "12345"
+                );
             }
 
-            $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8";
-            $dbh = new PDO($dsn, $user, $pass);
             $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
             return $dbh;
 
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             echo "Error de conexión: " . $e->getMessage();
             die();
         }
     }
 
     public static function ruta() {
-        return "http://localhost/proyectomvc_helpdesk/"; 
-        // Cambia a "https://your-heroku-app.herokuapp.com/" en producción
+        // Change this if your app’s URL on Heroku is different
+        return "https://mvchelpdesk.herokuapp.com/";
     }
 }
