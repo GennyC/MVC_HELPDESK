@@ -2,23 +2,26 @@
 class Conexion {
     public static function conectar() {
         try {
-            // Get the JawsDB connection URL from Heroku config vars
             $url = getenv("JAWSDB_URL");
 
-            if (!$url) {
-                throw new Exception("JAWSDB_URL not set in environment.");
+            if ($url) {
+                // Parse JawsDB URL (Heroku)
+                $dbparts = parse_url($url);
+
+                $host = $dbparts['host'];
+                $user = $dbparts['user'];
+                $pass = $dbparts['pass'];
+                $dbname = ltrim($dbparts['path'], '/');
+                $port = $dbparts['port'] ?? 3306;
+            } else {
+                // Local XAMPP fallback
+                $host = "localhost";
+                $user = "root";
+                $pass = "12345";
+                $dbname = "proyectomvc_helpdesk";
+                $port = 3306;
             }
 
-            // Parse the URL
-            $dbparts = parse_url($url);
-
-            $host = $dbparts['host'];
-            $user = $dbparts['user'];
-            $pass = $dbparts['pass'];
-            $dbname = ltrim($dbparts['path'], '/');
-            $port = $dbparts['port'] ?? 3306;
-
-            // Create PDO connection
             $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8";
             $dbh = new PDO($dsn, $user, $pass);
             $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -32,7 +35,7 @@ class Conexion {
     }
 
     public static function ruta() {
-        // Change this to your Heroku app URL when deployed
-        return "https://your-heroku-app-name.herokuapp.com/";
+        return "http://localhost/proyectomvc_helpdesk/"; 
+        // Cambia a "https://your-heroku-app.herokuapp.com/" en producción
     }
 }
